@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {%load static%}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="icon"
+      href="{%static 'img\site-pic.ico'%}"
+      type="image/icon type"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css'%}" />
+    <title>Weather Forecast</title>
+  </head>
+  <body>
+    <main class="{{description}}">
+      <section class="side-container">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="search-container">
+            <div
+              style="width: 22px; height: 22px; color: white"
+              class="weather-icon"
+            >
+              <i class="bi bi-cloud-fog"></i>
+            </div>
+            <input
+              type="text"
+              name="city"
+              class="geo-input"
+              placeholder="ex.Bengaluru, Delhi"
+              value="{{ location }}"
+            />
+            <button class="search-button">
+              <div style="width: 25px; height: 25px; color: white">
+                <i class="bi bi-search"></i>
+              </div>
+            </button>
+          </div>
+        </form>
+        <div class="day-stats">
+          <h2 class="day-stats_temperature">
+            <span class="day-stats_temperature_value">{{current_temp}}</span>
+          </h2>
+          <h3 class="day-stats_feelslike">
+            Feels like:&nbsp&nbsp<span class="day-stats_feelslike_value"
+              >{{ feels_like }}</span
+            >
+          </h3>
+          <ul class="day-stats_conditions">
+            <li>
+              <p class="day-stats_condition">
+                <span class="day-stats_humidity">{{ humidity }}</span>%
+              </p>
+              <p class="day-stats_condition_text">of Humidity</p>
+            </li>
+
+            <li>
+              <p class="day-stats_condition">
+                <span class="day-stats_clouds">{{ clouds }}</span>%
+              </p>
+              <p class="day-stats_condition_text">of Clouds</p>
+            </li>
+          </ul>
+        </div>
+        <img
+          src="{% static 'img/side-blur.png' %}"
+          class="side-blur"
+          alt="blur"
+        />
+      </section>
+
+      <section class="main-container">
+        <h4 class="secondary-title">Weather Forecast</h4>
+        <h1 class="weather_primary-title">{{ description }}</h1>
+        <div class="weather_location">
+          <div
+            style="width: 15px; height: 15px; color: white"
+            class="location-icon"
+          >
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <p class="weather_location-text">
+            <span class="weather_location-city">{{ city }}</span>
+            <span class="weather_location-country">{{ country }}</span>
+            <span class="weather_location-date">{{ time }}</span>
+          </p>
+        </div>
+        <p class="weather_primary-stats">
+          Wind:
+          <span class="weatherWindKph">{{ wind|default:"N/A" }}</span> Kilometer
+          per hour. Pressure is:
+          <span class="weatherPressure">{{ pressure|default:"N/A" }}</span> mb.
+          Visibility is:
+          <span class="weatherVisibility">{{ visibility|default:"N/A" }}</span>.
+          Maximum temperature is:
+          <span class="weatherMaxTemp">{{ MaxTemp|default:"N/A" }}</span>&deg;.
+          Minimum temperature is:
+          <span class="weatherMinTemp">{{ MinTemp|default:"N/A" }}</span>&deg;.
+        </p>
+
+        <ul class="forecast">
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time1|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              &nbsp;<span class="forecast-temperatureValue"
+                >{{ temp1|default:"N/A" }}</span
+              >&deg;
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum1|default:"N/A" }}</span
+              >
+            </p>
+          </li>
+        </ul>
+
+        <!--<li class="forecast-item">
+            <p class="forecast-time">{{ time2 }}</p>
+            <p class="forecast-temperature">
+              &nbsp;<span class="forecast-temperatureValue">{{ temp2 }}</span>&deg;
+            </p>
+            <p class="forecastWindText">
+              Humidity: <span class="forecast-humidityValue">{{ hum2 }}</span>
+            </p>
+          </li>
+
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time3 }}</p>
+            <p class="forecast-temperature">
+              &nbsp;<span class="forecast-temperatureValue">{{ temp3 }}</span>&deg;
+            </p>
+            <p class="forecastWindText">
+              Humidity: <span class="forecast-humidityValue">{{ hum3 }}</span>
+            </p>
+          </li>
+
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time4 }}</p>
+            <p class="forecast-temperature">
+              &nbsp;<span class="forecast-temperatureValue">{{ temp4 }}</span>&deg;
+            </p>
+            <p class="forecastWindText">
+              Humidity: <span class="forecast-humidityValue">{{ hum4 }}</span>
+            </p>
+          </li>
+
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time5 }}</p>
+            <p class="forecast-temperature">
+              &nbsp;<span class="forecast-temperatureValue">{{ temp5 }}</span>&deg;
+            </p>
+            <p class="forecastWindText">
+              Humidity: <span class="forecast-humidityValue">{{ hum5 }}</span>
+            </p>
+          </li>-->
+
+        <canvas id="chart" height="45px"></canvas>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{% static 'js/ChartSetup.js' %}"></script>
+  </body>
+</html>
+
+
+code  for prediction of  future time 1
+
+#7.Predict future
+def predict_future(model, current_value):
+  predictions = [current_value]
+  for i in range(5):
+    next_value = model.predict(np.array([[predictions[-1]]]))
+    predictions.append(next_value)
+    return predictions[1:]
+
+# Historical data processing
+        csv_path = os.path.join('C:\\Users\\HP\\OneDrive\\Desktop\\Weather\\weather.csv')
+        historical_data = read_historical_data(csv_path)
+        X, y, le = prepare_data(historical_data)
+        rain_model = train_rain_model(X, y)
+
+        # Wind direction processing
+        wind_deg = current_weather['wind_gust_dir'] % 360
+        compass_points = [
+            ("N", 0, 11.25), ("NNE", 11.25, 33.75), ("NE", 33.75, 56.25),
+            ("ENE", 56.25, 78.75), ("E", 78.75, 101.25), ("ESE", 101.25, 123.75),
+            ("SE", 123.75, 146.75), ("SSE", 146.25, 168.75), ("S", 168.75, 191.25),
+            ("SSW", 191.25, 213.75), ("SW", 213.75, 236.25), ("WSW", 236.25, 258.75),
+            ("W", 258.75, 281.25), ("WNW", 281.25, 303.75), ("NW", 303.75, 326.25),
+            ("NNW", 326.25, 348.75)
+        ]
+        compass_direction = next(
+            (point for point, start, end in compass_points if start <= wind_deg < end), "Unknown"
+        )
+        compass_direction_encoded = le.transform([compass_direction])[0] if compass_direction in le.classes_ else -1
+
+        # Current data preparation
+        current_data = {
+            'MinTemp': current_weather['temp_min'],
+            'MaxTemp': current_weather['temp_max'],
+            'WindGustDir': compass_direction_encoded,
+            'WindGustSpeed': current_weather.get('wind_gust_speed', 0),
+            'Humidity': current_weather['humidity'],
+            'Pressure': current_weather.get('pressure', None),
+            'Temp': current_weather['current_temp'],
+        }
+
+        current_df = pd.DataFrame([current_data])
+        rain_prediction = rain_model.predict(current_df)[0]
+
+        # Regression models and future predictions
+        X_temp, y_temp = prepare_regression_data(historical_data, 'Temp')
+        X_hum, y_hum = prepare_regression_data(historical_data, 'Humidity')
+        temp_model = train_regression_model(X_temp, y_temp)
+        hum_model = train_regression_model(X_hum, y_hum)
+
+        future_temp = predict_future(temp_model, current_weather['temp_min'])[0]  # Only one time
+        future_humidity = predict_future(hum_model, current_weather['humidity'])[0]  # Only one time
+
+        # Time calculations for one time (time1)
+        timezone = pytz.timezone('Asia/Karachi')
+        now = datetime.now(timezone)
+        next_hour = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+        time1 = next_hour.strftime("%H:00")
+        print(f"Generated time1: {time1}")
+
+        # Context for rendering weather data at one time
+        context = {
+            'location': city,
+            'current_temp': current_weather['current_temp'],
+            'MinTemp': current_weather['temp_min'],
+            'MaxTemp': current_weather['temp_max'],
+            'feels_like': current_weather['feels_like'],
+            'humidity': current_weather['humidity'],
+            'description': current_weather['weather'],
+            'country': current_weather['country'],
+            'time1': time1,
+            'temp1': f"{round(future_temp.item(), 1)}",  # Extract scalar value using `.item()`
+            'hum1': f"{round(future_humidity.item(), 1)}",  # Extract scalar value using `.item()`
+            'rain_prediction': rain_prediction,
+        }
+
+        return render(request, 'weather.html', context)
+
+    return render(request, 'weather.html')
+
+
+    old 5 times weather forecast
+    if len(future_times) < 5 or len(future_temp) < 5 or len(future_humidity) < 5:
+            raise ValueError("Insufficient data in future_times.")
+        if not future_times or len(future_times) < 5:
+            future_times = ["N/A"] * 5
+        print("Insufficient data for future_times. Using fallback values.")
+
+        time1, time2, time3, time4, time5 = future_times
+        temp1, temp2, temp3, temp4, temp5 = future_temp
+        hum1, hum2, hum3, hum4, hum5 = future_humidity
+
+        context = {
+          'location': city,
+          'current_temp': current_weather['current_temp'],
+          'MinTemp': current_weather['temp_min'],
+          'MaxTemp': current_weather['temp_max'],
+          'feels_like':current_weather['feels_like'],
+          'humidity':current_weather['humidity'],
+          'clouds': current_weather['clouds'],
+          'description': current_weather['description'],
+          'city': current_weather['city'],
+          'country': current_weather['country'],
+
+          'time': datetime.now(),
+          'date': datetime.now().strftime("%8 %d, %Y"),
+
+          'wind': current_weather['Wind_Gust_Speed'],
+          'pressure': current_weather['pressure'],
+          'visibility': current_weather['Visibility'],
+
+          'time1': time1,
+          'time2': time2,
+          'time3': time3,
+          'time4': time4,
+          'time5': time5,
+
+          'temp1': f"{round(temp1,1)}",
+          'temp2': f"{round(temp2,1)}",
+          'temp3': f"{round(temp3,1)}", 
+          'temp4': f"{round(temp4,1)}", 
+          'temp5': f"{round(temp5,1)}",
+
+          'hum1': f"{round(hum1,1)}",
+          'hum2': f"{round(hum2,1)}",
+          'hum3': f"{round(hum3,1)}",
+          'hum4': f"{round(hum4,1)}",
+          'hum5': f"{round(hum5,1)}",
+
+
+      }

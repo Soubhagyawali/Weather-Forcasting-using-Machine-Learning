@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {%load static%}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="icon"
+      href="{%static 'img/site-pic.ico'%}"
+      type="image/icon type"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css'%}" />
+    <title>Weather Forecast</title>
+  </head>
+  <body>
+    <main class="{{description}}">
+      <section class="side-container">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="search-container">
+            <div
+              style="width: 22px; height: 22px; color: white"
+              class="weather-icon"
+            >
+              <i class="bi bi-cloud-fog"></i>
+            </div>
+            <input
+              type="text"
+              name="city"
+              class="geo-input"
+              placeholder="ex.Bengaluru, Delhi"
+              value="{{ location }}"
+            />
+            <button class="search-button">
+              <div style="width: 25px; height: 25px; color: white">
+                <i class="bi bi-search"></i>
+              </div>
+            </button>
+          </div>
+        </form>
+        <div class="day-stats">
+          <h2 class="day-stats_temperature">
+            <span class="day-stats_temperature_value">{{ current_temp }}</span>°
+          </h2>
+          <h3 class="day-stats_feelslike">
+            Feels like:
+            <span class="day-stats_feelslike_value"
+              >{{ feels_like|default:"N/A" }}°</span
+            >
+          </h3>
+          <ul class="day-stats_conditions">
+            <li>
+              <p class="day-stats_condition">
+                <span class="day-stats_humidity">{{ humidity }}</span>%
+              </p>
+              <p class="day-stats_condition_text">Humidity</p>
+            </li>
+            <li>
+              <p class="day-stats_condition">
+                <span class="day-stats_wind">{{ wind }}</span> km/h
+              </p>
+              <p class="day-stats_condition_text">Wind Speed</p>
+            </li>
+          </ul>
+        </div>
+        <img
+          src="{% static 'img/side-blur.png' %}"
+          class="side-blur"
+          alt="blur"
+        />
+      </section>
+
+      <section class="main-container">
+        <h4 class="secondary-title">Weather Forecast</h4>
+        <h1 class="weather_primary-title">{{ description|title }}</h1>
+        <div class="weather_location">
+          <div
+            style="width: 15px; height: 15px; color: white"
+            class="location-icon"
+          >
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <p class="weather_location-text">
+            <span class="weather_location-city">{{ location }}</span>,
+            <span class="weather_location-country">{{ country }}</span>
+          </p>
+        </div>
+
+        <!-- Forecast Section -->
+        <!-- Replace the forecast section with this: -->
+        <ul class="forecast">
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time1|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              <span class="forecast-temperatureValue"
+                >{{ temp1|default:"N/A" }}</span
+              >°
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum1|default:"N/A" }}</span
+              >%
+            </p>
+          </li>
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time2|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              <span class="forecast-temperatureValue"
+                >{{ temp2|default:"N/A" }}</span
+              >°
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum2|default:"N/A" }}</span
+              >%
+            </p>
+          </li>
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time3|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              <span class="forecast-temperatureValue"
+                >{{ temp3|default:"N/A" }}</span
+              >°
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum3|default:"N/A" }}</span
+              >%
+            </p>
+          </li>
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time4|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              <span class="forecast-temperatureValue"
+                >{{ temp4|default:"N/A" }}</span
+              >°
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum4|default:"N/A" }}</span
+              >%
+            </p>
+          </li>
+          <li class="forecast-item">
+            <p class="forecast-time">{{ time5|default:"N/A" }}</p>
+            <p class="forecast-temperature">
+              <span class="forecast-temperatureValue"
+                >{{ temp5|default:"N/A" }}</span
+              >°
+            </p>
+            <p class="forecastWindText">
+              Humidity:
+              <span class="forecast-humidityValue"
+                >{{ hum5|default:"N/A" }}</span
+              >%
+            </p>
+          </li>
+        </ul>
+
+        <!-- Traveler Features Section -->
+        <div class="travel-features">
+          <!-- Travel Recommendations -->
+          <div class="feature-box">
+            <h3>Recommended Activities</h3>
+            <ul class="recommendations-list">
+              {% for activity in travel_recommendations %}
+              <li>{{ activity }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Packing List -->
+          <div class="feature-box">
+            <h3>Suggested Packing List</h3>
+            <form id="trip-duration-form">
+              <label for="days">Trip Duration (days):</label>
+              <input
+                type="number"
+                id="days"
+                name="days"
+                min="1"
+                max="30"
+                value="5"
+              />
+              <button type="button" onclick="updatePackingList()">
+                Update
+              </button>
+            </form>
+            <ul class="packing-list" id="packingList">
+              {% for item in packing_list %}
+              <li>
+                <input type="checkbox" id="item{{ forloop.counter }}" />
+                <label for="item{{ forloop.counter }}">{{ item }}</label>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Emergency Contacts -->
+          <div
+            class="feature-box emergency-contacts {% if is_extreme_weather %}alert{% endif %}"
+          >
+            <h3>Emergency Contacts</h3>
+            <div class="contact-category">
+              <h4>General Emergency</h4>
+              {% for name, number in emergency_contacts.general.items %}
+              <p>{{ name }}: <strong>{{ number }}</strong></p>
+              {% endfor %}
+            </div>
+            <div class="contact-category">
+              <h4>Local Services</h4>
+              {% for name, number in emergency_contacts.local.items %}
+              <p>{{ name }}: <strong>{{ number }}</strong></p>
+              {% endfor %}
+            </div>
+            {% if is_extreme_weather %}
+            <div class="weather-alert">
+              <i class="bi bi-exclamation-triangle"></i>
+              <p>Severe weather alert for this location!</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Packing List Update Function
+      function updatePackingList() {
+          const days = document.getElementById('days').value;
+          const city = '{{ location }}';
+
+          fetch('/update_packing/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({
+                  city: city,
+                  days: days
+              })
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.json();
+          })
+          .then(data => {
+              const packingList = document.getElementById('packingList');
+              packingList.innerHTML = '';
+
+              data.packing_list.forEach((item, index) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = `
+                      <input type="checkbox" id="item${index+1}">
+                      <label for="item${index+1}">${item}</label>
+                  `;
+                  packingList.appendChild(li);
+              });
+          })
+          .catch(error => {
+              console.error('Error updating packing list:', error);
+          });
+      }
+
+      // Notification System
+      function checkForAlerts() {
+          const isExtreme = {% if is_extreme_weather %}true{% else %}false{% endif %};
+
+          if (isExtreme && 'Notification' in window && Notification.permission === 'granted') {
+              new Notification('Weather Alert for {{ location }}', {
+                  body: 'Severe weather conditions detected! Please take precautions.',
+                  icon: '{% static "img/notification-icon.png" %}'
+              });
+          }
+      }
+
+      // Request notification permission on page load
+      document.addEventListener('DOMContentLoaded', function() {
+          if ('Notification' in window) {
+              Notification.requestPermission().then(permission => {
+                  if (permission === 'granted') {
+                      checkForAlerts();
+                  }
+              });
+          }
+      });
+    </script>
+  </body>
+</html>
